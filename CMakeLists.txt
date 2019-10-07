@@ -106,7 +106,7 @@ if(BUILD_SHARED_LIBS)
   add_compile_options(-fvisibility=hidden)
 endif(BUILD_SHARED_LIBS)
 
-add_library(leveldb "")
+add_library(leveldb SHARED "")
 target_sources(leveldb
   PRIVATE
     "${PROJECT_BINARY_DIR}/${LEVELDB_PORT_CONFIG_DIR}/port_config.h"
@@ -271,3 +271,7 @@ endif(HAVE_TCMALLOC)
 find_package(Threads REQUIRED)
 target_link_libraries(leveldb Threads::Threads)
 
+add_executable(leveldbutil
+  "${PROJECT_SOURCE_DIR}/db/leveldbutil.cc"
+)
+target_link_libraries(leveldbutil leveldb)

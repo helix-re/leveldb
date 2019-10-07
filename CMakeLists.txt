@@ -276,7 +276,49 @@ endif(HAVE_TCMALLOC)
 find_package(Threads REQUIRED)
 target_link_libraries(leveldb Threads::Threads)
 
-add_executable(leveldbutil
-  "${PROJECT_SOURCE_DIR}/db/leveldbutil.cc"
-)
-target_link_libraries(leveldbutil leveldb)
+
+if(LEVELDB_INSTALL)
+  include(GNUInstallDirs)
+  install(TARGETS leveldb
+    EXPORT leveldbTargets
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  )
+  install(
+    FILES
+      "${PROJECT_SOURCE_DIR}/${LEVELDB_PUBLIC_INCLUDE_DIR}/c.h"
+      "${PROJECT_SOURCE_DIR}/${LEVELDB_PUBLIC_INCLUDE_DIR}/cache.h"
+      "${PROJECT_SOURCE_DIR}/${LEVELDB_PUBLIC_INCLUDE_DIR}/comparator.h"
+      "${PROJECT_SOURCE_DIR}/${LEVELDB_PUBLIC_INCLUDE_DIR}/db.h"
+      "${PROJECT_SOURCE_DIR}/${LEVELDB_PUBLIC_INCLUDE_DIR}/dumpfile.h"
+      "${PROJECT_SOURCE_DIR}/${LEVELDB_PUBLIC_INCLUDE_DIR}/env.h"
+      "${PROJECT_SOURCE_DIR}/${LEVELDB_PUBLIC_INCLUDE_DIR}/export.h"
+      "${PROJECT_SOURCE_DIR}/${LEVELDB_PUBLIC_INCLUDE_DIR}/filter_policy.h"
+      "${PROJECT_SOURCE_DIR}/${LEVELDB_PUBLIC_INCLUDE_DIR}/iterator.h"
+      "${PROJECT_SOURCE_DIR}/${LEVELDB_PUBLIC_INCLUDE_DIR}/options.h"
+      "${PROJECT_SOURCE_DIR}/${LEVELDB_PUBLIC_INCLUDE_DIR}/slice.h"
+      "${PROJECT_SOURCE_DIR}/${LEVELDB_PUBLIC_INCLUDE_DIR}/status.h"
+      "${PROJECT_SOURCE_DIR}/${LEVELDB_PUBLIC_INCLUDE_DIR}/table_builder.h"
+      "${PROJECT_SOURCE_DIR}/${LEVELDB_PUBLIC_INCLUDE_DIR}/table.h"
+      "${PROJECT_SOURCE_DIR}/${LEVELDB_PUBLIC_INCLUDE_DIR}/write_batch.h"
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/leveldb
+  )
+
+  include(CMakePackageConfigHelpers)
+  write_basic_package_version_file(
+      "${PROJECT_BINARY_DIR}/leveldbConfigVersion.cmake"
+      COMPATIBILITY SameMajorVersion
+  )
+  install(
+    EXPORT leveldbTargets
+    NAMESPACE leveldb::
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/leveldb"
+  )
+  install(
+    FILES
+      "${PROJECT_SOURCE_DIR}/cmake/leveldbConfig.cmake"
+      "${PROJECT_BINARY_DIR}/leveldbConfigVersion.cmake"
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/leveldb"
+  )
+endif(LEVELDB_INSTALL)

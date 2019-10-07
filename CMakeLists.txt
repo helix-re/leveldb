@@ -106,7 +106,12 @@ if(BUILD_SHARED_LIBS)
   add_compile_options(-fvisibility=hidden)
 endif(BUILD_SHARED_LIBS)
 
-add_library(leveldb SHARED "")
+if(WIN32)
+	add_library(leveldb "")
+else()
+	add_library(leveldb SHARED "")
+endif(WIN32)
+
 target_sources(leveldb
   PRIVATE
     "${PROJECT_BINARY_DIR}/${LEVELDB_PORT_CONFIG_DIR}/port_config.h"
